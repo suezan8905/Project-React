@@ -152,7 +152,7 @@ export default function Home() {
               </div>
             )}
             <h1 className="mt-10 text-sm text-gray-600">
-              &copy; {new Date().getFullYear()} Instashots from Cobi
+              &copy; {new Date().getFullYear()} Instashots from Suezan
             </h1>
           </div>
         </div>
