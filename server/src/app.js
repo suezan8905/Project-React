@@ -10,7 +10,11 @@ import commentRoutes from "./routes/comment.js";
 
 const app = express();
 const corsOptions = {
-  origin: ["http://localhost:4600", "https://instaclone-self-six.vercel.app"],
+  origin: [
+    "http://localhost:4600",
+    "https://project-react-5yde.vercel.app",
+    // this above is our client url in client
+  ],
   optionsSuccessStatus: 200,
   methods: ["GET", "POST", "PATCH", "DELETE"],
   credentials: true,
