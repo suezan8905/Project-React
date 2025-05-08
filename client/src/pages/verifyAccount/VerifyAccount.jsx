@@ -41,11 +41,11 @@ export default function VerifyAccount() {
     };
   }, [accessToken, userId, verificationToken]);
 
-  // useEffect(() => {
-  //   if (user?.isVerified) {
-  //     navigate("/");
-  //   }
-  // }, [navigate, user?.isVerified]);
+  useEffect(() => {
+    if (user?.isVerified) {
+      navigate("/");
+    }
+  }, [navigate, user?.isVerified]);
 
   if (isLoading) {
     return <DataSpinner />;
