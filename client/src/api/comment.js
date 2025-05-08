@@ -1,5 +1,7 @@
 import axiosInstance from "../utils/axiosInstance";
 
+// this file is handling comment-related features, just like the auth.js file handled user features.
+
 export const createComment = async (postId, comment, accessToken) => {
   return await axiosInstance.post(`/comments/create/${postId}`, comment, {
     headers: {

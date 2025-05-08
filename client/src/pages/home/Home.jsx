@@ -2,16 +2,17 @@ import { useAuth, usePosts } from "../../store";
 import MetaArgs from "../../components/MetaArgs";
 import Container from "../../components/Container";
 import Skeleton from "../../components/Skeleton";
-import { lazy, Suspense, useState } from "react";
+import { lazy, Suspense, useEffect, useState } from "react";
 import { Link } from "react-router";
 import { followUser, getRandomUsers } from "../../api/auth";
 import useFetch from "../../hooks/useFetch";
 import { toast } from "sonner";
 import handleError from "../../utils/handleError";
+import useInfiniteScroll from "../../hooks/useInfiniteScroll";
 const Card = lazy(() => import("./components/Card"));
 
 export default function Home() {
-  const { posts, loading } = usePosts();
+  const { posts, loading, setPage, data: postsData, page, error } = usePosts();
   const { user, handleLogout, accessToken, setUser } = useAuth();
   const { data } = useFetch({
     apiCall: getRandomUsers,
@@ -19,7 +20,43 @@ export default function Home() {
   });
   const [active, setActive] = useState(0);
   const [followLoading, setFollowLoading] = useState(false);
+  //creating state when loaing more spinner
+  const [loadingMorePosts, setLoadingMorePosts] = useState(false);
+  const [allPosts, setAllPosts] = useState(posts || []);
+  const lastPostRef = useInfiniteScroll({
+    loading: loadingMorePosts,
+    hasMore: postsData?.pagination?.hasMore,
+    setPage: (pageUpdater) => {
+      setLoadingMorePosts(true);
+      setPage((prev) => {
+        const next =
+          typeof pageUpdater === "function" ? pageUpdater(prev) : pageUpdater;
+        return next;
+      });
+    },
+  });
+
+  useEffect(() => {
+    if (!loading) setLoadingMorePosts(false);
+  }, [allPosts, loading]);
+
+  useEffect(() => {
+    if (!postsData?.posts) return;
+
+    if (page === 1) {
+      setAllPosts(postsData.posts);
+    } else {
+      setAllPosts((prev) => {
+        const existingPostIds = new Set(prev.map((post) => post._id));
+        const postsToAdd = postsData.posts.filter(
+          (post) => !existingPostIds.has(post._id) //these is to combine both the existing and new upload in the array
+        );
+        return [...prev, ...postsToAdd]; //This, we return the prev. array while adding to the new post
+      });
+    }
+  }, [postsData?.posts, page]);
   
+
   const toggleFollowUser = async (followerId) => {
     setFollowLoading(true);
     try {
@@ -50,11 +87,27 @@ export default function Home() {
                 <Skeleton />
               ) : (
                 <div className="w-full md:max-w-[450px] 2xl:max-w-[600px] mx-auto">
-                  {posts?.length > 0 ? (
+                  {allPosts?.length > 0 ? (
                     <Suspense fallback={<Skeleton />}>
-                      {posts?.map((post) => (
-                        <Card key={post._id} post={post} />
-                      ))}
+                      {allPosts?.map((post, idx) => {
+                        const isLast = idx === allPosts.length - 1;
+                        return (
+                          <div
+                            ref={isLast ? lastPostRef : undefined}
+                            key={post._id}
+                          >
+                            <Card post={post} />
+                          </div>
+                        );
+                      })}
+                      {loadingMorePosts && (
+                        <div className="flex flex-justify my-4">
+                          <span
+                            className="loading loading-spinner loading-md
+                          text-secondary"
+                          ></span>
+                        </div>
+                      )}
                     </Suspense>
                   ) : (
                     <p className="my-8 text-center text-lg font-bold">
@@ -62,6 +115,9 @@ export default function Home() {
                     </p>
                   )}
                 </div>
+              )}
+              {error && (
+                <span className="text-center text-red-500 my-4">{error}</span>
               )}
             </div>
           </div>
@@ -94,7 +150,7 @@ export default function Home() {
               </Link>
               <button
                 onClick={handleLogout}
-                className="btn bg-fuchsia-900 text-white"
+                className="btn bg-red-700 rounded-md text-white"
               >
                 Logout
               </button>
@@ -135,7 +191,7 @@ export default function Home() {
                     </Link>
                     <button
                       disabled={user?._id === item._id}
-                      className="btn bg-fuchsia-900 w-[110px] text-white"
+                      className="btn bg-[var(--wine-red)] rounded-md w-[110px] text-white"
                       onClick={() => {
                         toggleFollowUser(item._id);
                         setActive(index);

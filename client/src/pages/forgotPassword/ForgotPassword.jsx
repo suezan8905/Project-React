@@ -1,6 +1,6 @@
 import { useForm } from "react-hook-form";
 import MetaArgs from "../../components/MetaArgs";
-import logo from "../../assets/logo.png";
+import logo from "../../assets/logo1.svg";
 import { validateEmail } from "../../utils/formValidate";
 import { Link } from "react-router";
 import { sendForgotPasswordMail } from "../../api/auth";
@@ -40,7 +40,7 @@ export default function ForgotPassword() {
         <h1 className="mt-6 text-xl font-semibold text-center">
           Forgot your password
         </h1>
-        <p className="mt-2 text-sm text-center">
+        <p className="text-sm text-center">
           Enter your email to recover your account
         </p>
         <form

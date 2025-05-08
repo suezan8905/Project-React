@@ -1,5 +1,10 @@
 import axiosInstance from "../utils/axiosInstance";
 
+
+// This file handles authentication and user-related API requests using Axios, a library that helps your app make requests to your backend (like login, register, update profile, etc.).
+
+// Each function here sends a request to your backend server and returns the result. You’ll use them in your React components when you need to call those features.
+
 export const registerUser = async (formData) => {
   return await axiosInstance.post("/auth/register", formData);
 };

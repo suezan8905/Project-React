@@ -1,5 +1,7 @@
 import axiosInstance from "../utils/axiosInstance";
 
+//Great! This file is all about managing posts in your app — just like you’ve had separate files for auth and comments, this one is for posts.
+
 export const createPost = async (formData, accessToken) => {
   return await axiosInstance.post("/post/create", formData, {
     headers: {
