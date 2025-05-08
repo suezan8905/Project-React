@@ -26,7 +26,7 @@ export default function Card({ post }) {
   const { setPosts } = usePosts();
   const [isPostLiked, setIsPostLiked] = useState(
     post?.likes.some((id) => id._id === user?._id)
-  ); //returns boolean if userId matches the likeId
+  ); //returns boolean if userId matches the likeId value
   const [isPostSaved, setIsPostSaved] = useState(
     post?.savedBy.some((id) => id._id === user?._id)
   );
