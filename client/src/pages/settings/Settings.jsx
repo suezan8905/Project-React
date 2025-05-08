@@ -1,12 +1,22 @@
-import { NavLink, Outlet } from "react-router";
+import { NavLink, Outlet, useNavigate, useLocation } from "react-router";
 import Container from "../../components/Container";
 import MetaArgs from "../../components/MetaArgs";
 import { settingsLinks } from "../../libs/constants";
 import { useAuth } from "../../store";
 import TimeAgo from "timeago-react";
+import { useEffect } from "react";
 
 export default function Settings() {
   const { user } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const path = location.pathname === "/settings";
+
+  useEffect(() => {
+    if (path) {
+      navigate("/settings/update-password");
+    }
+  }, [navigate, path]);
 
   const formatTime = (time) => {
     return <TimeAgo datetime={time} locale="en-US" />;
